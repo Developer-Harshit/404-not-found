@@ -1,0 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+body {
+  overflow: hidden;
+}
