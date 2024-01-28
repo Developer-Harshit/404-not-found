@@ -1,6 +1,7 @@
 import { Renderer } from "./scripts/renderer";
 import "./css/retro.css";
 import "./css/styles.css";
+import { Ui } from "./scripts/ui";
 
 // 1 . Canvas to draw game objects
 // 2.  Canvas to apply shader
@@ -14,6 +15,8 @@ window.onload = () => {
   const ctx = renderer.surf;
 
   renderer.init();
+  const ui = new Ui(renderer);
+  ui.init();
 
   let prevTime = 0;
   function draw(time) {

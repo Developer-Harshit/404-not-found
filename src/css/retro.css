@@ -127,8 +127,10 @@ a:hover {
   background-size: 100% 0.3rem;
   border-radius: 16px;
   position: absolute;
+  z-index: 1;
 }
 .glow {
+  z-index: 1;
   -webkit-animation: crt-glow 60s infinite;
   animation: crt-glow 60s infinite;
   background: radial-gradient(
@@ -136,8 +138,8 @@ a:hover {
     #1b5cd4 0%,
     rgba(27, 147, 212, 0.88) 58%,
     rgba(21, 192, 235, 0.57) 80%,
-    rgba(19, 67, 94, 0.27) 93%,
-    rgba(10, 17, 23, 0) 100%
+    rgba(12, 55, 80, 0.27) 93%,
+    rgba(17, 35, 52, 0) 100%
   );
   opacity: 0.15;
   pointer-events: none;
