@@ -33,20 +33,14 @@ export class Renderer {
   }
 
   resize() {
-    let x = Math.min(innerHeight, innerWidth);
-    if (x > 800) x *= 0.5;
-
-    this.cnv.width = x;
-    this.cnv.height = x;
-
-    this.surf.canvas.width = this.cnv.width / 2;
-    this.surf.canvas.height = this.cnv.height / 2;
+    this.surf.canvas.width = this.cnv.width;
+    this.surf.canvas.height = this.cnv.height;
 
     if (this.is_gl) this.reisize_gl();
   }
   reisize_gl() {
-    this.gl.canvas.width = this.cnv.width / 2;
-    this.gl.canvas.height = this.cnv.height / 2;
+    this.gl.canvas.width = this.cnv.width;
+    this.gl.canvas.height = this.cnv.height;
 
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
   }

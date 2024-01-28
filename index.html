@@ -4,11 +4,41 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>404 - Not Found</title>
-    <link rel="stylesheet" href="/styles.css" />
 
     <script src="./src/main.js" type="module"></script>
   </head>
   <body>
-    <canvas id="c"></canvas>
+    <div class="frame piece container">
+      <!-- message  -->
+      <div class="output" id="msg">
+        <p>
+          <span class="para">Click on play button to start</span>
+          <span class="cursor">|</span>
+        </p>
+      </div>
+      <!-- canvas  -->
+      <canvas id="c"></canvas>
+      <!-- info  -->
+      <div id="score" class="output info">
+        <p>0 0 0 0</p>
+      </div>
+      <div id="life" class="output info">
+        <p>♥ ♥ ♥</p>
+      </div>
+      <div class="output info">
+        <label for="shader-input" class="btn">Shaders</label>
+
+        <input type="checkbox" id="shader-input" />
+      </div>
+      <!-- control  -->
+      <div class="btn-div" id="left-div">
+        <p>A</p>
+      </div>
+      <div class="btn-div" id="right-div">
+        <p>D</p>
+      </div>
+    </div>
+    <div class="piece scanlines noclick"></div>
+    <div class="piece glow noclick"></div>
   </body>
 </html>

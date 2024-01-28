@@ -1,4 +1,6 @@
 import { Renderer } from "./scripts/renderer";
+import "./css/retro.css";
+import "./css/styles.css";
 
 // 1 . Canvas to draw game objects
 // 2.  Canvas to apply shader
@@ -13,25 +15,30 @@ window.onload = () => {
 
   renderer.init();
 
-  // dt = ? , fps = 60 ; frame b/w dt = 1 ; 1/60 s * 1000
-  const timeNow = Date.now();
-  setInterval(draw, 1000 / 30);
-  function draw() {
+  let prevTime = 0;
+  function draw(time) {
+    requestAnimationFrame(draw);
+
     renderer.render();
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
 
     ctx.font = "900 16px monospace";
 
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 3;
     ctx.strokeStyle = "black";
 
-    let h = ctx.canvas.height / 2;
-    let time = Date.now() - timeNow;
-    let fps = (1000 * renderer.framecount) / time;
-    ctx.strokeText(fps, 10, h);
-    ctx.fillStyle = "white";
-
-    ctx.fillText(fps, 10, h);
+    let dt = time - prevTime;
+    prevTime = time;
+    draw_fps(ctx, dt);
   }
+  requestAnimationFrame(draw);
 };
+
+function draw_fps(ctx, dt) {
+  let h = ctx.canvas.height / 2;
+  let fps = 1000 / dt;
+  ctx.strokeText(fps, 10, h);
+  ctx.fillStyle = "white";
+  ctx.fillText(fps, 10, h);
+}

@@ -1,0 +1,103 @@
+@-webkit-keyframes blink {
+  0%,
+  100%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  99% {
+    opacity: 0;
+  }
+}
+@keyframes blink {
+  0%,
+  100%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  99% {
+    opacity: 0;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  touch-action: none;
+  overscroll-behavior: none;
+  overflow: hidden;
+}
+
+input {
+  vertical-align: middle;
+  background-color: wheat;
+}
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 5% 75% 5% 15%;
+}
+
+.info,
+#msg {
+  align-items: center;
+  text-align: center;
+}
+.btn-div.active,
+.btn-div:hover {
+  color: black;
+  background-color: whitesmoke;
+}
+
+.btn-div {
+  touch-action: auto;
+  pointer-events: all;
+  border-radius: 16px;
+  display: flex;
+  background-color: black;
+
+  font-size: 5rem;
+
+  font-size: min(14svw, 14svh);
+
+  width: 80%;
+  height: 80%;
+
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  align-self: center;
+  justify-self: center;
+  grid-row: span 1;
+}
+#c {
+  width: 100%;
+  height: 100%;
+  border: 5px rgb(204, 201, 255);
+  border-style: ridge;
+  border-radius: 16px;
+  background-color: blue;
+
+  /* top to bottom  */
+  grid-row: span / 1;
+  /* left to right  */
+  grid-column: 1/-1;
+}
+#msg {
+  grid-column: 1/-1;
+}
+#msg .cursor {
+  background-color: aqua;
+  animation: blink 1.2s linear 0s infinite;
+}
+
+#left-div {
+  grid-column: 1/2;
+}
+#right-div {
+  grid-column: 3/-1;
+}
