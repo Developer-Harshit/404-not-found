@@ -9,7 +9,7 @@ const float bloomFactor = 0.8;
 const float vigFactor = 0.15;
 const float mixFactor = 0.4;
 const float deformFactor = 3.0;
-const float chromoFactor = 0.013;
+const float chromoFactor = 0.0053;
 const float chromoOffset = 0.002;
 
 vec2 curve(vec2 uv) {

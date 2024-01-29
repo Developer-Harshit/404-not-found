@@ -16,9 +16,6 @@ export class Renderer {
     this.cnv = cnv;
 
     this.main = cnv.getContext("2d");
-    addEventListener("resize", () => {
-      this.resize();
-    });
 
     const effect = document.createElement("canvas");
 
@@ -33,19 +30,25 @@ export class Renderer {
   }
 
   resize() {
+    // setting cnv size
+    this.cnv.width = this.cnv.clientWidth;
+    this.cnv.height = this.cnv.clientHeight;
+
+    // setting surf size
     this.surf.canvas.width = this.cnv.width;
     this.surf.canvas.height = this.cnv.height;
 
-    if (this.is_gl) this.reisize_gl();
+    // setting gl size
+    if (this.is_gl) this._reisize_gl();
   }
-  reisize_gl() {
+  _reisize_gl() {
     this.gl.canvas.width = this.cnv.width;
     this.gl.canvas.height = this.cnv.height;
 
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
   }
 
-  init_gl() {
+  _init_gl() {
     this.program_info = createProgramInfo(this.gl, [vert, frag]);
     const arrays = {
       position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
@@ -53,27 +56,30 @@ export class Renderer {
     this.buffer_info = createBufferInfoFromArrays(this.gl, arrays);
   }
   init() {
-    if (this.is_gl) this.init_gl();
+    if (this.is_gl) this._init_gl();
 
     this.resize();
-    this.set_texture();
   }
-  set_texture() {
+
+  _render_gl() {
+    // setting texture
     this.tex = createTexture(this.gl, { src: this.surf.canvas });
-  }
-  render_gl() {
+    // setting uniforms
     const uniforms = {
       time: this.framecount * 0.05,
       resolution: [this.gl.canvas.width, this.gl.canvas.height],
       utex0: this.tex,
     };
-
+    // setting it into shader program
     this.gl.useProgram(this.program_info.program);
     setBuffersAndAttributes(this.gl, this.program_info, this.buffer_info);
     setUniforms(this.program_info, uniforms);
     drawBufferInfo(this.gl, this.buffer_info);
+
+    // drawing it into main canvas
+    this._render_layer(this.gl.canvas);
   }
-  render_element(ele) {
+  _render_layer(ele) {
     this.main.drawImage(ele, 0, 0, this.cnv.width, this.cnv.height);
   }
 
@@ -81,19 +87,8 @@ export class Renderer {
     this.main.fillStyle = "black";
     this.main.fillRect(0, 0, this.cnv.width, this.cnv.height);
     this.framecount += 1;
-    // render bg
-    // render game objects
 
-    if (this.is_gl) {
-      this.set_texture();
-      this.render_gl();
-
-      this.render_element(this.gl.canvas);
-    } else this.render_element(this.surf.canvas);
-
-    this.main.fillStyle = "white";
-    this.main.fillRect(40, this.cnv.height - 60, 100, 100);
-
-    // render ui
+    if (this.is_gl) this._render_gl();
+    else this._render_layer(this.surf.canvas);
   }
 }
