@@ -66,7 +66,7 @@ export class Renderer {
     this.tex = createTexture(this.gl, { src: this.surf.canvas });
     // setting uniforms
     const uniforms = {
-      time: this.framecount * 0.05,
+      time: this.framecount * 0.01,
       resolution: [this.gl.canvas.width, this.gl.canvas.height],
       utex0: this.tex,
     };
@@ -84,8 +84,6 @@ export class Renderer {
   }
 
   render() {
-    this.main.fillStyle = "black";
-    this.main.fillRect(0, 0, this.cnv.width, this.cnv.height);
     this.framecount += 1;
 
     if (this.is_gl) this._render_gl();

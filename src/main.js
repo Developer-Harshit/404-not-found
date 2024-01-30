@@ -1,8 +1,8 @@
-import { Renderer } from "./scripts/renderer";
 import "./css/retro.css";
 import "./css/styles.css";
-import { Ui } from "./scripts/ui";
+
 import { Game } from "./scripts/game";
+import { getRequestAnimationFrame } from "./scripts/utils";
 
 // 1 . Canvas to draw game objects
 // 2.  Canvas to apply shader
@@ -10,12 +10,18 @@ import { Game } from "./scripts/game";
 
 window.onload = () => {
   const game = new Game();
+  const RAF = getRequestAnimationFrame();
+  console.dir(RAF);
   game.init();
 
+  let prevTime = 0;
   function draw(time) {
-    requestAnimationFrame(draw);
+    let dt = time - prevTime;
+    prevTime = time;
+    game.ui.message(parseInt(1000 / dt));
     game.update();
     game.render();
+    RAF(draw);
   }
-  requestAnimationFrame(draw);
+  RAF(draw);
 };

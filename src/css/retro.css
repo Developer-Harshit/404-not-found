@@ -2,41 +2,7 @@
   font-family: "VT323";
   font-style: normal;
   font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJA.ttf)
-    format("truetype");
-}
-
-@-webkit-keyframes crt-glow {
-  0% {
-    opacity: 0.1;
-  }
-  50% {
-    opacity: 0.2;
-  }
-}
-@keyframes crt-glow {
-  0% {
-    opacity: 0.1;
-  }
-  50% {
-    opacity: 0.2;
-  }
-}
-@-webkit-keyframes crt-output {
-  0% {
-    opacity: 0.9;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-@keyframes crt-output {
-  0% {
-    opacity: 0.9;
-  }
-  50% {
-    opacity: 1;
-  }
+  src: url(/pixelated.ttf) format("truetype");
 }
 
 * {
@@ -92,55 +58,35 @@ a:hover {
 }
 .frame {
   background-color: transparent;
-  border-radius: 16px;
-  border: 1rem solid;
-  border-bottom-color: #121212;
-  border-left-color: #080808;
-  border-right-color: #080808;
-  border-top-color: #020202;
-  box-shadow: inset 0 0 18rem black, inset 0 0 3rem black, 0 0 10rem black;
-  height: 96%;
+
+  height: 100%;
   position: absolute;
-  top: 2%;
-  left: 2%;
-  width: 96%;
+  top: 0;
+  left: 0;
+  width: 100%;
   pointer-events: none;
 }
 
 .output {
-  -webkit-animation: crt-output 10ms infinite;
-  animation: crt-output 10ms infinite;
-
   pointer-events: auto;
   text-shadow: 0rem 0.2rem 1rem #0c7b46;
   z-index: -1;
 }
 
 .scanlines {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0) 50%,
-    rgba(0, 0, 0, 0.2) 70%,
-    rgba(0, 0, 0, 0.6)
-  );
+  opacity: 0.4;
+
+  background: url(/scanline.png) repeat;
+
   background-size: 100% 0.3rem;
   border-radius: 16px;
   position: absolute;
   z-index: 1;
 }
 .glow {
-  z-index: 1;
-  -webkit-animation: crt-glow 60s infinite;
-  animation: crt-glow 60s infinite;
-  background: radial-gradient(
-    circle at center,
-    #1b5cd4 0%,
-    rgba(27, 147, 212, 0.88) 58%,
-    rgba(21, 192, 235, 0.57) 80%,
-    rgba(12, 55, 80, 0.27) 93%,
-    rgba(17, 35, 52, 0) 100%
-  );
+  z-index: 3;
+
+  background: #1b5cd4;
   opacity: 0.15;
   pointer-events: none;
   position: fixed;

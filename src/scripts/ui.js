@@ -9,12 +9,15 @@ export class Ui {
     this.dt = 30;
     this.txt_queue = 0;
   }
-
-  message(text = "") {
+  message_queue(text = "") {
     setTimeout(() => {
       this._message(text);
     }, this.dt * this.txt_queue * 3);
     this.txt_queue += text.length;
+  }
+  message(text = "") {
+    const messagePara = document.querySelector("#msg .para");
+    messagePara.innerText = text;
   }
   _message(text = "") {
     const messagePara = document.querySelector("#msg .para");
