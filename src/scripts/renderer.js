@@ -34,7 +34,8 @@ export class Renderer {
   resize() {
     // setting cnv size
     let ratio = this.cnv.clientWidth / this.cnv.clientHeight
-    let size = Math.min(outerHeight,outerWidth)/2.5
+    
+    let size = Math.min(outerHeight,outerWidth)/1.7
     this.cnv.width =  size ;
     this.cnv.height = size /ratio;
 
@@ -46,8 +47,8 @@ export class Renderer {
     if (this.check_gl()) this._reisize_gl();
   }
   _reisize_gl() {
-    this.gl.canvas.width = this.cnv.width;
-    this.gl.canvas.height = this.cnv.height;
+    this.gl.canvas.width = this.cnv.width /1.2
+    this.gl.canvas.height = this.cnv.height/1.2
 
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
   }
@@ -60,7 +61,7 @@ export class Renderer {
     this.buffer_info = createBufferInfoFromArrays(this.gl, arrays);
   }
   check_gl() {
-    return this.is_gl && !this.gl.isContextLost();
+    return this.is_gl && !this.gl.isContextLost() && this.gl;
   }
   init() {
     if (this.check_gl()) this._init_gl();

@@ -1,4 +1,3 @@
-import { BullerHandler } from "./bullet";
 import { EnemyHandler } from "./enemy";
 import { Player } from "./player";
 import { Renderer } from "./renderer";
@@ -21,19 +20,20 @@ export class Game {
 
     this.player = new Player(this);
     this.enemies = new EnemyHandler(this);
-    this.bullets = new BullerHandler(this);
+
+    this.count = 0;
   }
   resize() {
     this.renderer.resize();
     this.width = this.cnv.width;
     this.height = this.cnv.height;
 
-    let old_size = this.size;
-    this.size = Math.floor(Math.min(this.width, this.height) / 8);
+    let s_ratio = this.size;
+    this.size = Math.floor(Math.min(this.width, this.height) / 20);
+    s_ratio = this.size / s_ratio;
 
-    this.player.resize(old_size, this.size);
-    this.enemies.resize(old_size, this.size);
-    this.bullets.resize(old_size, this.size);
+    this.player.resize(s_ratio);
+    this.enemies.resize(s_ratio);
   }
   render(time) {
     // calculating dt
@@ -42,45 +42,42 @@ export class Game {
 
     //bg
     let ctx = this.renderer.surf;
-    ctx.drawImage(this.sprites.bg, 0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.drawImage(this.sprites.bg, 0, 0, this.width, this.height);
 
+    // ground
+    ctx.drawImage(
+      this.sprites.ground,
+      0,
+      this.height - this.size,
+      this.width,
+      this.size
+    );
+
+    // player
+    this.player.render(ctx);
     // text
-    let h = ctx.canvas.height / 2;
+    let h = this.height / 2;
     ctx.font = `900 ${this.size}px monospace`;
     ctx.lineWidth = 1;
-
-    // text 1
     ctx.strokeStyle = "black";
-    ctx.strokeText("Not Found", 10, h);
     ctx.strokeText(1000 / dt, 10, h + this.size);
-
-    // text 2
     ctx.fillStyle = "white";
-    ctx.fillText("Not Found", 10, h);
     ctx.fillText(1000 / dt, 10, h + this.size);
+
     // must be called last
     this.renderer.render(time);
   }
   update() {
-    //
+    this.count += 1;
+    // player
+    this.player.update();
+
+    if (this.count % 5 == 0) this.player.shoot();
   }
-  load_image(src = "/", size = 1) {
+  load_image(src = "/") {
     // let ctx = document.createElement("canvas").getContext("2d");
     let img = document.createElement("img");
     img.src = src;
-
-    img.addEventListener(
-      "load",
-      () => {
-        let ratio = img.width / img.height;
-        img.width = size;
-        img.height = size / ratio;
-        // ctx.canvas.width = size;
-        // ctx.canvas.height = size / ratio;
-        // ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
-      },
-      { once: true }
-    );
 
     return img;
   }
@@ -93,14 +90,15 @@ export class Game {
     this.sprites.bg = this.load_image("/bg.jpg", this.renderer.cnv.width);
     console.log(this.sprites.bg);
 
-    // // idk
-    // this.sprites.ground;
+    // idk
+    this.sprites.ground = this.load_image("/ground.png");
+
     // // blue
-    // this.sprites.player;
+    this.sprites.player = this.load_image("/player.png");
     // // yellow or white
-    // this.sprites.bullet;
+    this.sprites.bullet = this.load_image("/bullet.png");
     // // enemies - green,red,pink,yellow
-    // this.sprites.green;
+    this.sprites.green = this.load_image("/green.png");
     // this.sprites.red;
     // this.sprites.pink;
     // this.sprites.yellow;

@@ -26,40 +26,65 @@ export class Ui {
 
   /**
    * @param {Game} game
-   * @param {Renderer} renderer
    */
-  init(game, renderer) {
+  init(game) {
+    const dir = 0.5;
     addEventListener("resize", () => {
       game.resize();
     });
 
     const shader_btn = document.getElementById("shader-input");
     shader_btn.addEventListener("change", (e) => {
-      renderer.is_gl = e.target.checked;
+      game.renderer.is_gl = e.target.checked;
     });
 
     const left_div = document.getElementById("left-div");
-    this.init_div(left_div, -1);
+    this.init_div(game, left_div, -dir);
 
     const right_div = document.getElementById("right-div");
-    this.init_div(right_div, 1);
+    this.init_div(game, right_div, dir);
+
+    // key events
+    addEventListener("keydown", (e) => {
+      console.log(e.key);
+      if (e.key == "a") {
+        game.player.mag = -dir;
+      }
+      if (e.key == "d") {
+        game.player.mag = dir;
+      }
+    });
+    addEventListener("keyup", (e) => {
+      console.log(e.key);
+      if (
+        (e.key == "a" && game.player.mag < 0) ||
+        (e.key == "d" && game.player.mag > 0)
+      ) {
+        game.player.mag = 0;
+      }
+    });
   }
   /**
+   * @param {Game} game
    * @param {HTMLDivElement} divEle
-   * @param {Number} mag
+   * @param {Number} dir
    */
-  init_div(divEle, mag = 1) {
+  init_div(game, divEle, dir = 1) {
     divEle.addEventListener("pointerdown", () => {
       divEle.classList.add("active");
-      this.game.inc = 3 * mag;
+      game.player.mag = dir;
     });
 
     const reset = () => {
       divEle.classList.remove("active");
-      this.game.inc = 0;
+      if (
+        (dir > 0 && game.player.mag > 0) ||
+        (dir < 0 && game.player.mag < 0)
+      ) {
+        game.player.mag = 0;
+      }
     };
     divEle.addEventListener("pointerup", reset);
-
     divEle.addEventListener("pointercancel", reset);
     divEle.addEventListener("pointerleave", reset);
   }
