@@ -1,4 +1,4 @@
-export class EnemyHandler {
+export class BullerHandler {
   /**
    * @param {Game} game
    */
@@ -16,13 +16,6 @@ export class EnemyHandler {
   }
   init() {}
 }
+// 100 max
 
-class Enemy {}
-// 20 green
-const greenSettings = {};
-// 15 red
-const redSettings = {};
-// 10 pink
-const pinkSettings = {};
-// 6 yellow
-const yellowSettings = {};
+class Bullet {}

@@ -8,6 +8,7 @@ import {
   setUniforms,
   drawBufferInfo,
 } from "twgl.js";
+import { getGLContext } from "./utils";
 export class Renderer {
   /**
    * @param {HTMLCanvasElement} cnv
@@ -19,27 +20,28 @@ export class Renderer {
 
     const effect = document.createElement("canvas");
 
-    this.gl = effect.getContext("webgl2");
+    this.gl = getGLContext(effect);
 
+    console.log(this.gl);
     const surfCnv = document.createElement("canvas");
     this.surf = surfCnv.getContext("2d");
 
-    this.framecount = 0;
+    this.time = 0;
 
     this.is_gl = true;
   }
 
   resize() {
     // setting cnv size
-    this.cnv.width = this.cnv.clientWidth;
-    this.cnv.height = this.cnv.clientHeight;
+    this.cnv.width = this.cnv.clientWidth / 2;
+    this.cnv.height = this.cnv.clientHeight / 2;
 
     // setting surf size
     this.surf.canvas.width = this.cnv.width;
     this.surf.canvas.height = this.cnv.height;
 
     // setting gl size
-    if (this.is_gl) this._reisize_gl();
+    if (this.check_gl()) this._reisize_gl();
   }
   _reisize_gl() {
     this.gl.canvas.width = this.cnv.width;
@@ -55,10 +57,11 @@ export class Renderer {
     };
     this.buffer_info = createBufferInfoFromArrays(this.gl, arrays);
   }
+  check_gl() {
+    return this.is_gl && !this.gl.isContextLost();
+  }
   init() {
-    if (this.is_gl) this._init_gl();
-
-    this.resize();
+    if (this.check_gl()) this._init_gl();
   }
 
   _render_gl() {
@@ -66,11 +69,12 @@ export class Renderer {
     this.tex = createTexture(this.gl, { src: this.surf.canvas });
     // setting uniforms
     const uniforms = {
-      time: this.framecount * 0.01,
+      time: this.time * 0.005,
       resolution: [this.gl.canvas.width, this.gl.canvas.height],
       utex0: this.tex,
     };
     // setting it into shader program
+
     this.gl.useProgram(this.program_info.program);
     setBuffersAndAttributes(this.gl, this.program_info, this.buffer_info);
     setUniforms(this.program_info, uniforms);
@@ -83,10 +87,10 @@ export class Renderer {
     this.main.drawImage(ele, 0, 0, this.cnv.width, this.cnv.height);
   }
 
-  render() {
-    this.framecount += 1;
+  render(time) {
+    this.time = time;
 
-    if (this.is_gl) this._render_gl();
+    if (this.check_gl()) this._render_gl();
     else this._render_layer(this.surf.canvas);
   }
 }

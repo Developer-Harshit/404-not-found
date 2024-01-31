@@ -16,3 +16,17 @@ export function getRequestAnimationFrame() {
     }
   );
 }
+/**
+ *
+ * @param {HTMLCanvasElement} cnv
+ */
+export function getGLContext(cnv) {
+  const ctxOptions = { antialias: false, depth: false };
+
+  let ctx = cnv.getContext("webgl", ctxOptions);
+  if (ctx) {
+    return ctx;
+  }
+  ctx = cnv.getContext("webgl2", ctxOptions);
+  return ctx;
+}

@@ -1,52 +1,26 @@
-import { ProjectileHandler } from "./projectiles";
+import { Game } from "./game";
 
 export class Player {
+  /**
+   * @param {Game} game
+   */
   constructor(game) {
     this.game = game;
-    this.vel = 5;
     this.x = 0;
     this.y = 0;
-    this.size = 40;
-    this.life = 3;
-    this.projectiles = new ProjectileHandler(game, -1);
+    this.rw = 2;
+    this.rh = 1;
   }
-  update() {
-    // updating projectiles
-    this.projectiles.update();
-
-    this.y = this.game.bottom - this.size;
-    this.vel += (this.game.inc - this.vel) * 0.05;
-
-    this.x += this.vel;
-
-    if (this.x < 0) {
-      this.x = 0;
-      this.vel *= -0.9;
-    } else if (this.x > this.game.width - this.size) {
-      this.x = this.game.width - this.size;
-      this.vel *= -0.9;
-    }
+  resize(old_size, new_size) {
+    this.x = (this.x * new_size) / old_size;
+    this.set_ground();
   }
-  shoot() {
-    this.projectiles.add(this.x + this.size / 2, this.y);
+  set_ground() {
+    let y = this.game.height - this.game.size * (this.rh + 1);
+    this.y = y;
   }
-  render() {
-    // rendering player's projectile
-    this.projectiles.render();
 
-    // rendering player
-    this.game.draw_rect(this.x, this.y, this.size, this.size);
+  init() {
+    this.set_ground();
   }
-}
-
-export function draw_projectile(projectiles, game) {
-  projectiles.forEach((pjt) => {
-    game.draw_rect(pjt.x, pjt.y, 10, 10);
-  });
-}
-
-export function update_projectile(projectiles, game, dir) {
-  projectiles.forEach((pjt) => {
-    pjt.y += dir;
-  });
 }

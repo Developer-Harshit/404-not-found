@@ -1,79 +1,105 @@
+import { BullerHandler } from "./bullet";
 import { EnemyHandler } from "./enemy";
 import { Player } from "./player";
 import { Renderer } from "./renderer";
 import { Ui } from "./ui";
-
 export class Game {
-  constructor() {
-    this.cnv = document.getElementById("c");
+  /**
+   * @param {Ui} ui
+   * @param {Renderer} renderer
+   * @param {HTMLCanvasElement} cnv
+   */
+  constructor(ui, renderer, cnv) {
+    this.renderer = renderer;
+    this.ui = ui;
+    this.cnv = cnv;
 
-    this.renderer = new Renderer(this.cnv);
-    this.ui = new Ui(this);
-    this.bg = document.createElement("img");
-    this.bg.src = "/bg.jpg";
-    this.ctx = this.renderer.surf;
+    this.width = 100;
+    this.height = 100;
+    this.size = 1;
+    this.sprites = {};
 
-    this.inc = 0;
     this.player = new Player(this);
-
     this.enemies = new EnemyHandler(this);
-    // projectiles shooted by enemies
-    this.projectiles = [];
-
-    this.bottom = 100;
-
-    this.framecount = 0;
-
-    this.resize();
+    this.bullets = new BullerHandler(this);
   }
   resize() {
     this.renderer.resize();
     this.width = this.cnv.width;
     this.height = this.cnv.height;
 
-    this.block_size = Math.min(this.width, this.height) / 20;
-  }
+    let old_size = this.size;
+    this.size = Math.floor(Math.min(this.width, this.height) / 5);
 
-  draw_rect(x, y, w, h) {
-    this.ctx.strokeRect(x, y, w, h);
-    this.ctx.fillRect(x, y, w, h);
+    this.player.resize(old_size, this.size);
+    this.enemies.resize(old_size, this.size);
+    this.bullets.resize(old_size, this.size);
+  }
+  render(time) {
+    // calculating dt
+    let dt = time - this.prevTime;
+    this.prevTime = time;
+
+    //bg
+    let ctx = this.renderer.surf;
+    ctx.drawImage(this.sprites.bg, 0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // text
+    let h = ctx.canvas.height / 2;
+    ctx.font = `900 ${this.size}px monospace`;
+    ctx.lineWidth = 1;
+
+    // text 1
+    ctx.strokeStyle = "black";
+    ctx.strokeText("Not Found", 10, h);
+    ctx.strokeText(1000 / dt, 10, h + this.size);
+
+    // text 2
+    ctx.fillStyle = "white";
+    ctx.fillText("Not Found", 10, h);
+    ctx.fillText(1000 / dt, 10, h + this.size);
+    // must be called last
+    this.renderer.render(time);
   }
   update() {
-    if (this.framecount % 20 == 0) this.player.shoot();
-    this.bottom = this.ctx.canvas.height - 4;
-    this.player.update();
-
-    this.enemies.update(this.player.projectiles);
+    //
   }
-  render() {
-    this.framecount += 1;
+  load_image(src = "/", size = 1) {
+    let ctx = document.createElement("canvas").getContext("2d");
+    let img = document.createElement("img");
+    img.src = src;
+    // ctx.canvas.width = 100;
+    // ctx.canvas.height = 100;
 
-    const ctx = this.ctx;
-    ctx.fillStyle = "white";
-    ctx.strokeStyle = "black";
-
-    // drawing background
-    ctx.drawImage(this.bg, 0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    // bottom line
-    this.draw_rect(0, this.bottom, ctx.canvas.width, 4);
-    // player
-    ctx.fillStyle = "red";
-    this.player.render();
-
-    // enemy
-    ctx.fillStyle = "blue";
-    this.enemies.render();
-
-    // drawing to main canvas
-
-    this.renderer.render();
+    img.onload = () => {
+      let ratio = img.width / img.height;
+      ctx.canvas.width = size;
+      ctx.canvas.height = size / ratio;
+      ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+    };
+    return ctx.canvas;
   }
-
   init() {
     this.renderer.init();
-    this.ui.init();
+    this.ui.init(this, this.renderer);
     this.resize();
-    this.enemies.spawn_group();
+
+    // bg black
+    this.sprites.bg = this.load_image("/bg.jpg", this.renderer.cnv.width);
+    console.log(this.sprites.bg);
+
+    // // idk
+    // this.sprites.ground;
+    // // blue
+    // this.sprites.player;
+    // // yellow or white
+    // this.sprites.bullet;
+    // // enemies - green,red,pink,yellow
+    // this.sprites.green;
+    // this.sprites.red;
+    // this.sprites.pink;
+    // this.sprites.yellow;
+
+    this.player.init();
   }
 }

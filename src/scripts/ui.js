@@ -1,20 +1,7 @@
 import { Game } from "./game";
+import { Renderer } from "./renderer";
 
 export class Ui {
-  /**
-   * @param {Game} game
-   */
-  constructor(game) {
-    this.game = game;
-    this.dt = 30;
-    this.txt_queue = 0;
-  }
-  message_queue(text = "") {
-    setTimeout(() => {
-      this._message(text);
-    }, this.dt * this.txt_queue * 3);
-    this.txt_queue += text.length;
-  }
   message(text = "") {
     const messagePara = document.querySelector("#msg .para");
     messagePara.innerText = text;
@@ -23,30 +10,32 @@ export class Ui {
     const messagePara = document.querySelector("#msg .para");
     messagePara.innerText = "";
     const wordCount = text.length;
-
     let i = 0;
-
-    const interval = setInterval(() => {
+    clearInterval(this.interval);
+    this.interval = setInterval(() => {
       if (wordCount <= i) {
-        clearInterval(interval);
+        clearInterval(this.interval);
 
         return;
       }
-      this.txt_queue -= 1;
-      this.txt_queue = Math.min(0, this.txt_queue);
+
       messagePara.innerText += text[i];
       i++;
-    }, this.dt);
+    }, 100);
   }
 
-  init() {
+  /**
+   * @param {Game} game
+   * @param {Renderer} renderer
+   */
+  init(game, renderer) {
     addEventListener("resize", () => {
-      this.game.resize();
+      game.resize();
     });
 
     const shader_btn = document.getElementById("shader-input");
     shader_btn.addEventListener("change", (e) => {
-      this.game.renderer.is_gl = e.target.checked;
+      renderer.is_gl = e.target.checked;
     });
 
     const left_div = document.getElementById("left-div");
