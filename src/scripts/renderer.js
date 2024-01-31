@@ -33,8 +33,10 @@ export class Renderer {
 
   resize() {
     // setting cnv size
-    this.cnv.width = this.cnv.clientWidth/2;
-    this.cnv.height = this.cnv.clientHeight/2;
+    let ratio = this.cnv.clientWidth / this.cnv.clientHeight
+    let size = Math.min(outerHeight,outerWidth)/2.5
+    this.cnv.width =  size ;
+    this.cnv.height = size /ratio;
 
     // setting surf size
     this.surf.canvas.width = this.cnv.width;

@@ -29,7 +29,7 @@ export class Game {
     this.height = this.cnv.height;
 
     let old_size = this.size;
-    this.size = Math.floor(Math.min(this.width, this.height) / 5);
+    this.size = Math.floor(Math.min(this.width, this.height) / 8);
 
     this.player.resize(old_size, this.size);
     this.enemies.resize(old_size, this.size);
@@ -65,19 +65,24 @@ export class Game {
     //
   }
   load_image(src = "/", size = 1) {
-    let ctx = document.createElement("canvas").getContext("2d");
+    // let ctx = document.createElement("canvas").getContext("2d");
     let img = document.createElement("img");
     img.src = src;
-    // ctx.canvas.width = 100;
-    // ctx.canvas.height = 100;
 
-    img.onload = () => {
-      let ratio = img.width / img.height;
-      ctx.canvas.width = size;
-      ctx.canvas.height = size / ratio;
-      ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
-    };
-    return ctx.canvas;
+    img.addEventListener(
+      "load",
+      () => {
+        let ratio = img.width / img.height;
+        img.width = size;
+        img.height = size / ratio;
+        // ctx.canvas.width = size;
+        // ctx.canvas.height = size / ratio;
+        // ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+      },
+      { once: true }
+    );
+
+    return img;
   }
   init() {
     this.renderer.init();
