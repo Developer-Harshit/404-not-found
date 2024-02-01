@@ -14,41 +14,45 @@ export class Renderer {
    * @param {HTMLCanvasElement} cnv
    */
   constructor(cnv) {
-    this.cnv = cnv;
+    this.time = 0;
+    this.is_gl = true;
 
-    this.main = cnv.getContext("2d");
+    this.cnv = cnv;
+    this.surf = cnv.getContext("2d", {
+      willReadFrequently: true,
+      alpha: false,
+    });
 
     const effect = document.createElement("canvas");
-
     this.gl = getGLContext(effect);
 
-    console.log(this.gl);
-    const surfCnv = document.createElement("canvas");
-    this.surf = surfCnv.getContext("2d");
+    // moz
+    this.surf.mozImageSmoothingEnabled = false;
+    this.gl.mozImageSmoothingEnabled = false;
 
-    this.time = 0;
+    // webkit
+    this.surf.webkitImageSmoothingEnabled = false;
+    this.gl.webkitImageSmoothingEnabled = false;
 
-    this.is_gl = true;
+    // general
+    this.surf.imageSmoothingEnabled = false;
+    this.gl.imageSmoothingEnabled = false;
   }
 
   resize() {
     // setting cnv size
-    let ratio = this.cnv.clientWidth / this.cnv.clientHeight
-    
-    let size = Math.min(outerHeight,outerWidth)/1.7
-    this.cnv.width =  size ;
-    this.cnv.height = size /ratio;
+    let ratio = this.cnv.clientWidth / this.cnv.clientHeight;
 
-    // setting surf size
-    this.surf.canvas.width = this.cnv.width;
-    this.surf.canvas.height = this.cnv.height;
+    let size = Math.min(outerHeight, outerWidth) / 2.7;
+    this.cnv.width = size;
+    this.cnv.height = size / ratio;
 
     // setting gl size
     if (this.check_gl()) this._reisize_gl();
   }
   _reisize_gl() {
-    this.gl.canvas.width = this.cnv.width /1.2
-    this.gl.canvas.height = this.cnv.height/1.2
+    this.gl.canvas.width = this.cnv.width;
+    this.gl.canvas.height = this.cnv.height;
 
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
   }
@@ -69,7 +73,12 @@ export class Renderer {
 
   _render_gl() {
     // setting texture
-    this.tex = createTexture(this.gl, { src: this.surf.canvas });
+    this.tex = createTexture(this.gl, {
+      src: this.surf.canvas,
+
+      min: this.gl.NEAREST,
+      mag: this.gl.NEAREST,
+    });
     // setting uniforms
     const uniforms = {
       time: this.time * 0.005,
@@ -84,16 +93,13 @@ export class Renderer {
     drawBufferInfo(this.gl, this.buffer_info);
 
     // drawing it into main canvas
-    this._render_layer(this.gl.canvas);
-  }
-  _render_layer(ele) {
-    this.main.drawImage(ele, 0, 0, this.cnv.width, this.cnv.height);
+
+    this.surf.drawImage(this.gl.canvas, 0, 0, this.cnv.width, this.cnv.height);
   }
 
   render(time) {
     this.time = time;
 
     if (this.check_gl()) this._render_gl();
-    else this._render_layer(this.surf.canvas);
   }
 }

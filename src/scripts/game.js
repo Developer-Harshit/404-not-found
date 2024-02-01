@@ -19,7 +19,7 @@ export class Game {
     this.sprites = {};
 
     this.player = new Player(this);
-    this.enemies = new EnemyHandler(this);
+    this.enemies = new EnemyHandler(this, 50);
 
     this.count = 0;
   }
