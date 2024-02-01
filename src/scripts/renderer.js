@@ -76,8 +76,8 @@ export class Renderer {
     this.tex = createTexture(this.gl, {
       src: this.surf.canvas,
 
-      min: this.gl.NEAREST,
-      mag: this.gl.NEAREST,
+      // min: this.gl.NEAREST,
+      // mag: this.gl.NEAREST,
     });
     // setting uniforms
     const uniforms = {

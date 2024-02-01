@@ -57,12 +57,12 @@ export class Game {
     this.player.render(ctx);
     // text
     let h = this.height / 2;
-    ctx.font = `900 ${this.size}px monospace`;
+    ctx.font = `900 ${this.size * 4}px monospace`;
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
-    ctx.strokeText(1000 / dt, 10, h + this.size);
+    ctx.strokeText(parseInt(1000 / dt), 10, h + this.size);
     ctx.fillStyle = "white";
-    ctx.fillText(1000 / dt, 10, h + this.size);
+    ctx.fillText(parseInt(1000 / dt), 10, h + this.size);
 
     // must be called last
     this.renderer.render(time);
