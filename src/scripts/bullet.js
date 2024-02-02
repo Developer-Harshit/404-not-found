@@ -8,11 +8,13 @@ export class BullerHandler {
     this.maxsize = maxsize;
     this.pool = [];
   }
-  resize(size_ratio) {
+  resize(rx, ry) {
     // new / old size
+    this.w = this.game.size / 4;
+    this.h = this.game.size / 2;
     this.pool.forEach((element) => {
-      element.x *= size_ratio;
-      element.y *= size_ratio;
+      element.x *= rx;
+      element.y *= ry;
     });
   }
   add_dir(x, y, dx, dy) {
@@ -27,17 +29,18 @@ export class BullerHandler {
       }
     }
   }
-  update() {
+
+  update(dt) {
     for (let i = 0; i < this.maxsize; i++) {
       let bul = this.pool[i];
       if (!bul.active) continue;
-      bul.x += bul.dx * this.game.size;
-      bul.y += bul.dy * this.game.size;
+      bul.x += bul.dx * this.game.size * dt;
+      bul.y += bul.dy * this.game.size * dt;
       if (
-        bul.x < 0 ||
-        bul.x > this.game.width + this.game.size / 2 ||
-        bul.y < 0 ||
-        bul.y > this.game.height + this.game.size
+        bul.x < -this.w ||
+        bul.x > this.game.width + this.w ||
+        bul.y < -this.h ||
+        bul.y > this.game.height + this.h
       ) {
         bul.active = false;
       }
@@ -51,13 +54,7 @@ export class BullerHandler {
     for (let i = 0; i < this.maxsize; i++) {
       let bul = this.pool[i];
       if (!bul.active) continue;
-      ctx.drawImage(
-        this.game.sprites.bullet,
-        bul.x,
-        bul.y,
-        this.game.size / 4,
-        this.game.size / 2
-      );
+      ctx.drawImage(this.game.sprites.bullet, bul.x, bul.y, this.w, this.h);
     }
   }
   add(x, y) {

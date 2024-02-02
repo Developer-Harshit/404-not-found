@@ -44,11 +44,17 @@ export class Renderer {
     let ratio = this.cnv.clientWidth / this.cnv.clientHeight;
 
     let size = Math.min(outerHeight, outerWidth) / 2.7;
-    this.cnv.width = size;
-    this.cnv.height = size / ratio;
+    console.log(size);
+    this.surf.canvas.width = size;
+    this.surf.canvas.height = size / ratio;
 
     // setting gl size
-    if (this.check_gl()) this._reisize_gl();
+
+    try {
+      this._reisize_gl();
+    } catch (e) {
+      console.log("Error in resize gl");
+    }
   }
   _reisize_gl() {
     this.gl.canvas.width = this.cnv.width;
@@ -63,32 +69,37 @@ export class Renderer {
       position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
     };
     this.buffer_info = createBufferInfoFromArrays(this.gl, arrays);
+
+    this.gl.useProgram(this.program_info.program);
+    setBuffersAndAttributes(this.gl, this.program_info, this.buffer_info);
+    drawBufferInfo(this.gl, this.buffer_info);
   }
   check_gl() {
     return this.is_gl && !this.gl.isContextLost() && this.gl;
   }
   init() {
-    if (this.check_gl()) this._init_gl();
+    try {
+      this._init_gl();
+    } catch (e) {
+      console.log("Error in init gl");
+    }
   }
 
   _render_gl() {
     // setting texture
     this.tex = createTexture(this.gl, {
-      src: this.surf.canvas,
+      src: this.cnv,
 
       // min: this.gl.NEAREST,
       // mag: this.gl.NEAREST,
     });
     // setting uniforms
     const uniforms = {
-      time: this.time * 0.005,
+      time: this.time * 0.01,
       resolution: [this.gl.canvas.width, this.gl.canvas.height],
       utex0: this.tex,
     };
     // setting it into shader program
-
-    this.gl.useProgram(this.program_info.program);
-    setBuffersAndAttributes(this.gl, this.program_info, this.buffer_info);
     setUniforms(this.program_info, uniforms);
     drawBufferInfo(this.gl, this.buffer_info);
 
@@ -100,6 +111,12 @@ export class Renderer {
   render(time) {
     this.time = time;
 
-    if (this.check_gl()) this._render_gl();
+    if (this.check_gl()) {
+      try {
+        this._render_gl();
+      } catch (e) {
+        //
+      }
+    }
   }
 }

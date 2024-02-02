@@ -9,14 +9,16 @@ export class Player {
     this.game = game;
     this.x = 0;
     this.y = 0;
-    this.speed = 0.5;
+    this.speed = 0.05;
     this.mag = 0;
     this.bullets = new BullerHandler(game, 2);
   }
-  resize(size_ratio) {
-    this.bullets.resize(size_ratio);
+  resize(rx, ry) {
+    this.w = this.game.size * 2;
+    this.h = this.game.size;
 
-    this.x = this.x * size_ratio;
+    this.bullets.resize(rx, ry);
+    this.x *= rx;
     this.set_ground();
   }
   set_ground() {
@@ -25,18 +27,17 @@ export class Player {
     this.y = y;
   }
   shoot() {
-    this.bullets.add(this.x, this.y);
-    this.bullets.add(this.x + this.game.size * 1.5, this.y);
+    this.bullets.add(this.x + this.game.size, this.y);
   }
-  update() {
+  update(dt) {
     // updating bullets
-    this.bullets.update();
+    this.bullets.update(dt);
 
     // updating speed
     this.speed += (this.mag - this.speed) * 0.05;
 
     // updating pos
-    this.x += this.speed * this.game.size;
+    this.x += this.speed * this.game.size * dt;
 
     // checking wall collide
     if (this.x < 0) {
@@ -54,16 +55,10 @@ export class Player {
   render(ctx) {
     this.bullets.render(ctx);
 
-    ctx.drawImage(
-      this.game.sprites.player,
-      this.x,
-      this.y,
-      2 * this.game.size,
-      this.game.size
-    );
+    ctx.drawImage(this.game.sprites.player, this.x, this.y, this.w, this.h);
   }
   init() {
-    this.bullets.init(0, -0.4);
+    this.bullets.init(0, -0.34);
     this.set_ground();
   }
 }

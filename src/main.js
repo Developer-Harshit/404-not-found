@@ -5,23 +5,29 @@ import { Renderer } from "./scripts/renderer";
 import { Ui } from "./scripts/ui";
 
 import { getRequestAnimationFrame } from "./scripts/utils";
+window.addEventListener(
+  "DOMContentLoaded",
+  () => {
+    const RAF = getRequestAnimationFrame();
+    // game
+    // ui
+    // renderer
+    const cnv = document.getElementById("c");
 
-window.onload = () => {
-  const RAF = getRequestAnimationFrame();
-  // game
-  // ui
-  // renderer
-  const cnv = document.getElementById("c");
+    const ui = new Ui();
+    const renderer = new Renderer(cnv);
+    const game = new Game(ui, renderer, cnv);
+    game.init();
 
-  const ui = new Ui();
-  const renderer = new Renderer(cnv);
-  const game = new Game(ui, renderer, cnv);
-  game.init();
-
-  function draw(time) {
+    let prev_time = 0;
+    function draw(time) {
+      let dt = time - prev_time;
+      prev_time = time;
+      RAF(draw);
+      game.update(dt / 10);
+      game.render(dt);
+    }
     RAF(draw);
-    game.update();
-    game.render(time);
-  }
-  RAF(draw);
-};
+  },
+  { once: true }
+);

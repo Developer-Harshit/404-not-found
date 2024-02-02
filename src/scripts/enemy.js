@@ -1,8 +1,10 @@
 import { BullerHandler } from "./bullet";
+import { is_colliding } from "./utils";
 
 export class EnemyHandler {
   /**
    * @param {Game} game
+   * * @param {Number} maxsize
    */
   constructor(game, maxsize) {
     this.game = game;
@@ -10,16 +12,38 @@ export class EnemyHandler {
     this.bullets = new BullerHandler(this, 10);
     this.pool = [];
 
-    // this.left = false
-    // this.right = false
-    // this.wander_dir = -1
+    this.w = 10;
+    this.h = 10;
   }
-  resize(size_ratio) {
-    // new / old size
+  resize(rx, ry) {
+    this.w = this.game.size;
+    this.h = this.game.size;
     this.pool.forEach((element) => {
-      element.x *= size_ratio;
-      element.y *= size_ratio;
+      element.x *= rx;
+      element.y *= ry;
     });
+  }
+  /**
+   * @param {BullerHandler} bullets
+   */
+  check_bullet_collision(bullets) {
+    for (let i = 0; i < this.maxsize; i++) {
+      let ene = this.pool[i];
+
+      if (!ene.active) continue;
+
+      for (let i = 0; i < bullets.maxsize; i++) {
+        let bul = bullets.pool[i];
+        if (!bul.active) continue;
+
+        if (is_colliding(bul, bullets, ene, this)) {
+          ene.life = 0;
+          // ene.active = false;
+          bul.active = false;
+          break;
+        }
+      }
+    }
   }
   wander() {
     // wander every nth frame
@@ -31,11 +55,50 @@ export class EnemyHandler {
   charge() {
     //
   }
-  update() {
-    //
+  update(dt) {
+    for (let i = 0; i < this.maxsize; i++) {
+      let ene = this.pool[i];
+      if (!ene.active) continue;
+      if (ene.life < 1) {
+        ene.active = false;
+        continue;
+      }
+    }
   }
-  render() {
+  /**
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  render(ctx) {
     //
+    for (let i = 0; i < this.maxsize; i++) {
+      let ene = this.pool[i];
+      if (!ene.active) continue;
+      // console.log("bye");
+      ctx.drawImage(this.game.sprites.green, ene.x, ene.y, this.w, this.h);
+    }
+  }
+
+  spawn_wave() {
+    let w = parseInt(this.game.width / this.game.size) - 2;
+
+    let y = 2;
+    let x = 1.5;
+    for (let i = 0; i < this.maxsize; i++) {
+      this.add(x * this.game.size, y * this.game.size, "green", "wander");
+      if (x >= w - 1) {
+        y += 1.5;
+        x = 0;
+      }
+      x += 1.5;
+    }
+  }
+  resize(rx, ry) {
+    this.pool.forEach((ene) => {
+      if (ene.active) {
+        ene.x *= rx;
+        ene.y *= ry;
+      }
+    });
   }
   add(x, y, e_type = "blue", phase = "wander") {
     for (let i = 0; i < this.maxsize; i++) {

@@ -28,7 +28,7 @@ export class Ui {
    * @param {Game} game
    */
   init(game) {
-    const dir = 0.5;
+    const dir = 0.33;
     addEventListener("resize", () => {
       game.resize();
     });
@@ -46,7 +46,6 @@ export class Ui {
 
     // key events
     addEventListener("keydown", (e) => {
-      console.log(e.key);
       if (e.key == "a") {
         game.player.mag = -dir;
       }
@@ -55,7 +54,6 @@ export class Ui {
       }
     });
     addEventListener("keyup", (e) => {
-      console.log(e.key);
       if (
         (e.key == "a" && game.player.mag < 0) ||
         (e.key == "d" && game.player.mag > 0)

@@ -20,28 +20,27 @@ export class Game {
 
     this.player = new Player(this);
     this.enemies = new EnemyHandler(this, 50);
-
     this.count = 0;
   }
   resize() {
     this.renderer.resize();
+    let ratio_x = this.cnv.width / this.width;
+    let ratio_y = this.cnv.height / this.height;
+
     this.width = this.cnv.width;
     this.height = this.cnv.height;
 
-    let s_ratio = this.size;
     this.size = Math.floor(Math.min(this.width, this.height) / 20);
-    s_ratio = this.size / s_ratio;
 
-    this.player.resize(s_ratio);
-    this.enemies.resize(s_ratio);
+    this.player.resize(ratio_x, ratio_y);
+    this.enemies.resize(ratio_x, ratio_y);
   }
-  render(time) {
-    // calculating dt
-    let dt = time - this.prevTime;
-    this.prevTime = time;
+  render(dt) {
+    this.enemies.spawn_wave();
 
     //bg
     let ctx = this.renderer.surf;
+
     ctx.drawImage(this.sprites.bg, 0, 0, this.width, this.height);
 
     // ground
@@ -55,6 +54,8 @@ export class Game {
 
     // player
     this.player.render(ctx);
+    // enemies
+    this.enemies.render(ctx);
     // text
     let h = this.height / 2;
     ctx.font = `900 ${this.size * 4}px monospace`;
@@ -65,19 +66,35 @@ export class Game {
     ctx.fillText(parseInt(1000 / dt), 10, h + this.size);
 
     // must be called last
-    this.renderer.render(time);
+    this.renderer.render(this.count);
   }
-  update() {
+  update(dt) {
     this.count += 1;
     // player
-    this.player.update();
+    this.player.update(dt);
+    // enemies
+    this.enemies.update(dt);
+    this.enemies.check_bullet_collision(this.player.bullets);
 
-    if (this.count % 5 == 0) this.player.shoot();
+    if (this.count % 40 == 0) this.player.shoot();
   }
-  load_image(src = "/") {
-    // let ctx = document.createElement("canvas").getContext("2d");
+  load_image(src = "/", size = 10) {
+    let ctx = document.createElement("canvas").getContext("2d", {});
+
+    // smooth
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
+
     let img = document.createElement("img");
     img.src = src;
+
+    img.onload = () => {
+      let imgRatio = img.width / img.height;
+      ctx.canvas.width = size;
+      ctx.canvas.height = size / imgRatio;
+      ctx.drawImage(img, 0, 0);
+    };
 
     return img;
   }
@@ -87,8 +104,8 @@ export class Game {
     this.resize();
 
     // bg black
-    this.sprites.bg = this.load_image("/bg.jpg", this.renderer.cnv.width);
-    console.log(this.sprites.bg);
+
+    this.sprites.bg = this.load_image("/bg.jpg", 100);
 
     // idk
     this.sprites.ground = this.load_image("/ground.png");
@@ -104,5 +121,6 @@ export class Game {
     // this.sprites.yellow;
 
     this.player.init();
+    this.enemies.init();
   }
 }
